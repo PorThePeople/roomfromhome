@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-function CreateLeaseStep3(props) {
-  // Props
-  const { setCurrentStep, tenant, setTenant } = props;
-
+function CreateTenantStep2(props) {
+  const { setCurrentStep, newTenant, setNewTenant, hdlCreateTenant } = props;
   const hdlChange = (e) => {
-    setTenant((prv) => ({ ...prv, [e.target.name]: e.target.value }));
+    setNewTenant((prv) => ({ ...prv, [e.target.name]: e.target.value }));
   };
 
   return (
@@ -63,8 +61,8 @@ function CreateLeaseStep3(props) {
         </button>
         <button
           className="btn btn-primary"
-          onClick={() => setCurrentStep((prv) => prv + 1)}
-          disabled={!tenant.firstName || !tenant.lastName || !tenant.nationalId || !tenant.phone || false}
+          onClick={hdlCreateTenant}
+          disabled={!newTenant.firstName || !newTenant.lastName || !newTenant.nationalId || !newTenant.phone || false}
         >
           Next
         </button>
@@ -73,4 +71,4 @@ function CreateLeaseStep3(props) {
   );
 }
 
-export default CreateLeaseStep3;
+export default CreateTenantStep2;

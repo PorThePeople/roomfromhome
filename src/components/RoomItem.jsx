@@ -24,9 +24,6 @@ function RoomItem(props) {
         <button type="button" className="btn btn-xs" onClick={() => hdlDeleteRoom(room)}>
           <TrashIcon className="w-5" />
         </button>
-        {/* {room.status == 'AVAILABLE' && <button className="btn btn-xs">Add Lease</button>}
-        {room.status == 'OCCUPIED' && <button className="btn btn-xs">View Lease</button>}
-        {room.status == 'OCCUPIED' && <button className="btn btn-xs">View Tenants</button>} */}
       </td>
     </tr>
   );
