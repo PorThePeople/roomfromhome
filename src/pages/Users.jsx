@@ -47,7 +47,7 @@ function Users() {
 
   return (
     <div className="flex flex-wrap p-4 gap-4 w-full">
-      <div className="card bg-base-100 shadow-sm hover:bg-gray-100" onClick={hdlCreateUser}>
+      <div className="card bg-base-100 shadow-sm hover:bg-gray-100 w-[250px] cursor-pointer" onClick={hdlCreateUser}>
         <div className="card-body items-center justify-center">
           <h2 className="card-title text-center">Create a new user</h2>
           <h2 className="card-title text-center text-5xl">+</h2>
@@ -55,7 +55,7 @@ function Users() {
       </div>
       {allUsers.map((user) => {
         return (
-          <div className="card bg-base-100 shadow-sm">
+          <div className="card bg-base-100 shadow-sm w-[250px]">
             <div className="card-body">
               <h2 className="card-title text-center">
                 {user.firstName} {user.lastName}

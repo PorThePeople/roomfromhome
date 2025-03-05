@@ -15,7 +15,7 @@ const guestRouter = createBrowserRouter([
     element: <Navigate to="/" />,
   },
 ]);
-const userRouter = createBrowserRouter([
+const adminRouter = createBrowserRouter([
   {
     path: '/',
     element: <App />,
@@ -33,8 +33,25 @@ const userRouter = createBrowserRouter([
   },
 ]);
 
+const userRouter = createBrowserRouter([
+  {
+    path: '/',
+    element: <App />,
+    children: [
+      {
+        index: true,
+        element: <Dashboard />,
+      },
+      { path: 'rooms', element: <Rooms /> },
+      { path: 'tenants', element: <Tenants /> },
+      { path: 'leases', element: <Leases /> },
+      { path: '*', element: <Navigate to="/" /> },
+    ],
+  },
+]);
+
 export default function AppRouter() {
   const user = useUserStore((state) => state.user);
-  const finalRouter = user ? userRouter : guestRouter;
+  const finalRouter = !user ? guestRouter : user.role == 'ADMIN' ? adminRouter : userRouter;
   return <RouterProvider key={user?.id} router={finalRouter} />;
 }

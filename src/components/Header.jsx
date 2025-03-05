@@ -38,9 +38,13 @@ function Header() {
             <li>
               <Link to="/leases">Leases</Link>
             </li>
-            <li>
-              <Link to="/users">Users</Link>
-            </li>
+
+            {user.role == 'ADMIN' && (
+              <li>
+                <Link to="/users">Users</Link>
+              </li>
+            )}
+
             <div className="dropdown dropdown-end">
               <div tabIndex={0} role="button" className="btn m-1">
                 {user.firstName} ⬇️
