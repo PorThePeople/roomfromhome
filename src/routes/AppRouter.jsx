@@ -6,6 +6,7 @@ import Rooms from '../pages/Rooms';
 import Leases from '../pages/Leases';
 import Tenants from '../pages/Tenants';
 import Dashboard from '../pages/Dashboard';
+import Users from '../pages/Users';
 
 const guestRouter = createBrowserRouter([
   { path: '/', element: <Login /> },
@@ -26,6 +27,7 @@ const userRouter = createBrowserRouter([
       { path: 'rooms', element: <Rooms /> },
       { path: 'tenants', element: <Tenants /> },
       { path: 'leases', element: <Leases /> },
+      { path: 'users', element: <Users /> },
       { path: '*', element: <Navigate to="/" /> },
     ],
   },

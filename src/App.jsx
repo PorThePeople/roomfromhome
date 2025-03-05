@@ -7,7 +7,7 @@ function App() {
     <>
       <div className="min-h-screen bg-lime-100">
         <Header />
-        <main className="relative flex bg-gray-100">
+        <main className="flex bg-gray-100">
           <Outlet />
         </main>
       </div>

@@ -7,6 +7,7 @@ function Header() {
   const logout = useUserStore((state) => state.logout);
   const navigate = useNavigate();
   const [modalState, setModalState] = useState(false);
+  const user = useUserStore((state) => state.user);
 
   const hdlClickLogout = () => {
     navigate('/');
@@ -37,9 +38,12 @@ function Header() {
             <li>
               <Link to="/leases">Leases</Link>
             </li>
+            <li>
+              <Link to="/users">Users</Link>
+            </li>
             <div className="dropdown dropdown-end">
               <div tabIndex={0} role="button" className="btn m-1">
-                User ⬇️
+                {user.firstName} ⬇️
               </div>
               <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
                 <li onClick={hdlProfile}>
