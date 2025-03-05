@@ -34,6 +34,7 @@ const createUserSchema = z
   });
 
 function ModalCreateUser(props) {
+  const token = useUserStore((state) => state.token);
   const { setModalState, getUsers } = props;
   const { register, handleSubmit, formState, reset } = useForm({
     resolver: zodResolver(createUserSchema),
@@ -48,7 +49,9 @@ function ModalCreateUser(props) {
   const hdlSubmit = async (value) => {
     try {
       console.log(value);
-      const response = await axios.post('http://localhost:8000/auth/register', value);
+      const response = await axios.post('http://localhost:8000/auth/register', value, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       getUsers();
       hdlCloseModal();
       createSuccess();

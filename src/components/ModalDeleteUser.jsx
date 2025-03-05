@@ -10,6 +10,7 @@ function ModalDeleteUser(props) {
   const { register, handleSubmit, formState, reset, setValue } = useForm();
   const { isSubmitting, errors } = formState;
   console.log(currentUser);
+  const token = useUserStore((state) => state.token);
 
   useEffect(() => {
     if (currentUser.id) setValue('id', currentUser.id);
@@ -30,7 +31,9 @@ function ModalDeleteUser(props) {
   const hdlSubmit = async (value) => {
     try {
       console.log(value);
-      const response = await axios.delete(`http://localhost:8000/user/${currentUser.id}`);
+      const response = await axios.delete(`http://localhost:8000/user/${currentUser.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       getUsers();
       hdlCloseModal();
       createSuccess();

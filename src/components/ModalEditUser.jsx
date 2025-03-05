@@ -23,6 +23,7 @@ const editUserSchema = z.object({
 });
 
 function ModalEditUser(props) {
+  const token = useUserStore((state) => state.token);
   const { setEditModalState, getUsers, currentUser, setCurrentUser } = props;
   const { register, handleSubmit, formState, reset, setValue } = useForm({
     resolver: zodResolver(editUserSchema),
@@ -48,7 +49,9 @@ function ModalEditUser(props) {
   const hdlSubmit = async (value) => {
     try {
       console.log(value);
-      const response = await axios.put(`http://localhost:8000/user/${currentUser.id}`, value);
+      const response = await axios.put(`http://localhost:8000/user/${currentUser.id}`, value, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       getUsers();
       hdlCloseModal();
       createSuccess();
