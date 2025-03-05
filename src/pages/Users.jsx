@@ -1,15 +1,19 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import useUserStore from '../stores/userStore';
-import { CashIcon, HashtagIcon, PhoneIcon, RoleIcon, SettingsIcon } from '../icons';
+import { CashIcon, HashtagIcon, PhoneIcon, RoleIcon, SettingsIcon, TrashIcon } from '../icons';
 import ModalCreateUser from '../components/ModalCreateUser';
+import ModalEditUser from '../components/ModalEditUser';
+import ModalDeleteUser from '../components/ModalDeleteUser';
 
 function Users() {
   const [allUsers, setAllUsers] = useState([]);
   const token = useUserStore((state) => state.token);
   const user = useUserStore((state) => state.user);
   const [currentUser, setCurrentUser] = useState();
-  const [modalState, setModalState] = useState(false);
+  const [createModalState, setCreateModalState] = useState(false);
+  const [editModalState, setEditModalState] = useState(false);
+  const [deleteModalState, setDeleteModalState] = useState(false);
 
   const getUsers = async () => {
     try {
@@ -25,20 +29,28 @@ function Users() {
   }, []);
 
   const hdlCreateUser = () => {
-    setModalState((prv) => true);
+    setCreateModalState((prv) => true);
     document.getElementById('createUser-modal').showModal();
+  };
+
+  const hdlEditUser = (user) => {
+    setCurrentUser((prv) => user);
+    setEditModalState((prv) => true);
+    document.getElementById('editUser-modal').showModal();
+  };
+
+  const hdlDeleteUser = (user) => {
+    setCurrentUser((prv) => user);
+    setDeleteModalState((prv) => true);
+    document.getElementById('deleteUser-modal').showModal();
   };
 
   return (
     <div className="flex flex-wrap p-4 gap-4 w-full">
-      <div className="card bg-base-100 shadow-sm">
+      <div className="card bg-base-100 shadow-sm hover:bg-gray-100" onClick={hdlCreateUser}>
         <div className="card-body items-center justify-center">
           <h2 className="card-title text-center">Create a new user</h2>
-          <div className="card-actions justify-end">
-            <button className="btn btn-primary" onClick={hdlCreateUser}>
-              +
-            </button>
-          </div>
+          <h2 className="card-title text-center text-5xl">+</h2>
         </div>
       </div>
       {allUsers.map((user) => {
@@ -63,9 +75,12 @@ function Users() {
                 <CashIcon className="w-5" />
                 {user.salary}
               </div>
-              <div className="card-actions justify-end">
-                <button className="btn btn-ghost">
+              <div className="card-actions flex justify-center">
+                <button className="btn btn-ghost" onClick={() => hdlEditUser(user)}>
                   <SettingsIcon className="w-6" />
+                </button>
+                <button className="btn btn-ghost" onClick={() => hdlDeleteUser(user)}>
+                  <TrashIcon className="w-6" />
                 </button>
               </div>
             </div>
@@ -75,10 +90,33 @@ function Users() {
       {/* Modal */}
       <dialog id="createUser-modal" className="modal">
         <div className="modal-box max-w-[1000px]">
-          {modalState && <ModalCreateUser setModalState={setModalState} getUsers={getUsers} />}
+          {createModalState && <ModalCreateUser setModalState={setCreateModalState} getUsers={getUsers} />}
         </div>
       </dialog>
-      {/* {<pre>{JSON.stringify(allUsers, null, 2)}</pre>} */}
+      <dialog id="editUser-modal" className="modal">
+        <div className="modal-box">
+          {editModalState && (
+            <ModalEditUser
+              setEditModalState={setEditModalState}
+              getUsers={getUsers}
+              currentUser={currentUser}
+              setCurrentUser={setCurrentUser}
+            />
+          )}
+        </div>
+      </dialog>
+      <dialog id="deleteUser-modal" className="modal">
+        <div className="modal-box">
+          {deleteModalState && (
+            <ModalDeleteUser
+              setCurrentUser={setCurrentUser}
+              setDeleteModalState={setDeleteModalState}
+              getUsers={getUsers}
+              currentUser={currentUser}
+            />
+          )}
+        </div>
+      </dialog>
     </div>
   );
 }

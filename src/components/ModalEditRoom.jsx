@@ -21,32 +21,33 @@ function ModalEditRoom(props) {
   }, [room]);
 
   const hdlSubmit = async (value) => {
-    console.log(value);
-    // Call API
-    const result = await axios.put(
-      `http://localhost:8000/room/${room.id}`,
-      { ...value, monthlyRate: Number(value.monthlyRate) },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    try {
+      const result = await axios.put(
+        `http://localhost:8000/room/${room.id}`,
+        { ...value, monthlyRate: Number(value.monthlyRate) },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-    // Reset Fields
-    reset();
+      reset();
 
-    // Close Modal
-    document.getElementById('editRoom-modal').close();
-    createSuccess();
-    // Fetch All Data
-    setQuery((prv) => ({
-      contains: '',
-      status: '',
-      airCon: '',
-      orderBySort: '&orderBy=updatedAt&sort=desc',
-      take: '10',
-      skip: '',
-    }));
-    filter();
+      document.getElementById('editRoom-modal').close();
+      createSuccess();
+
+      setQuery((prv) => ({
+        contains: '',
+        status: '',
+        airCon: '',
+        orderBySort: '&orderBy=updatedAt&sort=desc',
+        take: '10',
+        skip: '',
+      }));
+      filter();
+    } catch (error) {
+      const errMsg = error.response?.data?.error || error.message;
+      createError(errMsg, 'deleteUser-modal');
+    }
   };
 
   return (

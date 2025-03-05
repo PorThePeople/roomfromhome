@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import useUserStore from '../stores/userStore';
 import Swal from 'sweetalert2';
+import { createError } from '../utils/error-warning';
 
 function ModalDeleteTenant(props) {
   const { tenant, getTenants } = props;
@@ -22,17 +23,22 @@ function ModalDeleteTenant(props) {
   };
 
   const hdlSubmit = async (value) => {
-    const response = await axios.delete(`http://localhost:8000/tenant/${value.id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (response.status == 204) {
-      getTenants();
-      hdlCloseModal();
-      Swal.fire({
-        title: 'Update Tenant Info Successful!',
-        icon: 'success',
+    try {
+      const response = await axios.delete(`http://localhost:8000/tenant/${value.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
+
+      if (response.status == 204) {
+        getTenants();
+        hdlCloseModal();
+        Swal.fire({
+          title: 'Update Tenant Info Successful!',
+          icon: 'success',
+        });
+      }
+    } catch (error) {
+      const errMsg = error.response?.data?.error || error.message;
+      createError(errMsg, 'deleteUser-modal');
     }
   };
 
