@@ -4,13 +4,17 @@ import axios from 'axios';
 import { useDebouncedCallback } from 'use-debounce';
 import LeasesContainer from '../components/LeasesContainer';
 import ModalCreateLease from '../components/ModalCreateLease';
+import Paginate from '../components/Paginate';
+import useUserStore from '../stores/userStore';
 
-const initialQuery = { contains: '', status: '', orderBySort: '' };
+const initialQuery = { contains: '', status: '', orderBySort: 'orderBy=createdAt&sort=desc', take: '10', skip: '' };
 
 function Leases() {
+  const token = useUserStore((state) => state.token);
   const [leases, setLeases] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [query, setQuery] = useState(initialQuery);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Update state when input changes
   const hdlChange = (e) => {
@@ -21,14 +25,26 @@ function Leases() {
     setQuery(initialQuery);
   };
 
-  const filter = async () => {
-    const results = await axios.get(`http://localhost:8000/lease`);
-    // console.log(results);
-    setLeases((prv) => results?.data?.results);
-  };
+  const filter = useDebouncedCallback(async () => {
+    const queryString = `${query.contains ? `contains=${query.contains}` : ''}${query.status}${
+      query.orderBySort
+    }&take=${query.take}${query.skip ? `&skip=${query.skip}` : ''}`;
+    const response = await axios.get(`http://localhost:8000/lease?${queryString}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setLeases((prv) => response?.data?.results);
+    setTotalCount((prv) => response?.data?.count);
+  }, 500);
+
   useEffect(() => {
     filter();
   }, []);
+
+  useEffect(() => {
+    filter();
+    setCurrentPage((prv) => 1);
+    setQuery((prv) => ({ ...prv, skip: '' }));
+  }, [query.contains, query.status, query.orderBySort]);
 
   return (
     <div className="w-full">
@@ -61,7 +77,7 @@ function Leases() {
       {/* Sort By */}
       <select className="select" name="orderBySort" onChange={hdlChange} value={query.orderBySort}>
         <option disabled={true}>Sort By:</option>
-        <option value="&orderBy=updatedAt&sort=desc">Recently Updated</option>
+        <option value="&orderBy=createdAt&sort=desc">Recently Created</option>
         <option value="&orderBy=endDate&sort=desc">End date DESC</option>
         <option value="&orderBy=startDate&sort=desc">Start date DESC</option>
       </select>
@@ -70,7 +86,15 @@ function Leases() {
         Remove All Filters
       </button>
       {/* Lease Container */}
-      <LeasesContainer leases={leases} />
+      <LeasesContainer leases={leases} filter={filter} />
+      {/* Pagination */}
+      <Paginate
+        setQuery={setQuery}
+        filter={filter}
+        totalCount={totalCount}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
       {/* Modal */}
       <dialog id="createLease-modal" className="modal">
         <div className="modal-box max-w-[1000px]">

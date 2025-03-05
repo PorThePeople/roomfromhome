@@ -2,6 +2,8 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import useUserStore from '../stores/userStore';
+import { createError } from '../utils/error-warning';
+import { createSuccess } from '../utils/success-alert';
 
 function ModalCreateRoom(props) {
   const { register, handleSubmit, formState, reset } = useForm();
@@ -12,32 +14,36 @@ function ModalCreateRoom(props) {
   const token = useUserStore((state) => state.token);
 
   const hdlSubmit = async (value) => {
-    // console.log(value);
-    // Call API
-    const result = await axios.post(
-      'http://localhost:8000/room',
-      { ...value, monthlyRate: Number(value.monthlyRate) },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    try {
+      // Call API
+      const result = await axios.post(
+        'http://localhost:8000/room',
+        { ...value, monthlyRate: Number(value.monthlyRate) },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-    // Reset Fields
-    reset();
+      // Reset Fields
+      reset();
 
-    // Close Modal
-    document.getElementById('createRoom-modal').close();
-
-    // Fetch All Data
-    setQuery((prv) => ({
-      contains: '',
-      status: '',
-      airCon: '',
-      orderBySort: '&orderBy=updatedAt&sort=desc',
-      take: '10',
-      skip: '',
-    }));
-    filter();
+      // Close Modal
+      document.getElementById('createRoom-modal').close();
+      createSuccess();
+      // Fetch All Data
+      setQuery((prv) => ({
+        contains: '',
+        status: '',
+        airCon: '',
+        orderBySort: '&orderBy=updatedAt&sort=desc',
+        take: '10',
+        skip: '',
+      }));
+      filter();
+    } catch (error) {
+      const errMsg = error.response?.data?.error || error.message;
+      createError(errMsg, 'createRoom-modal');
+    }
   };
 
   return (
@@ -48,6 +54,8 @@ function ModalCreateRoom(props) {
       >
         ✕
       </button>
+      <div className="text-2xl text-center">Create New Room</div>
+
       <form className="flex flex-col gap-4 p-4 w-[400px] mx-auto" onSubmit={handleSubmit(hdlSubmit)}>
         {/* Room Id */}
         <label className="input w-full">

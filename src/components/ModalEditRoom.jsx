@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import useUserStore from '../stores/userStore';
+import { createSuccess } from '../utils/success-alert';
+import { createError } from '../utils/error-warning';
 
 function ModalEditRoom(props) {
   const { room, setQuery, filter } = props;
@@ -34,7 +36,7 @@ function ModalEditRoom(props) {
 
     // Close Modal
     document.getElementById('editRoom-modal').close();
-
+    createSuccess();
     // Fetch All Data
     setQuery((prv) => ({
       contains: '',
@@ -55,6 +57,8 @@ function ModalEditRoom(props) {
       >
         ✕
       </button>
+      <div className="text-2xl text-center">Edit Room Info</div>
+
       <form className="flex flex-col gap-4 p-4 w-[400px] mx-auto" onSubmit={handleSubmit(hdlSubmit)}>
         {/* Room Id */}
         <label className="input w-full">

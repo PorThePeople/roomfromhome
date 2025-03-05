@@ -2,14 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/style.css';
+import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
+
+import { th } from 'react-day-picker/locale';
 
 function CreateLeaseStep2(props) {
   const { setCurrentStep, leaseInfo, setLeaseInfo, currentRoom } = props;
   const [startDate, setStartDate] = useState(new Date());
 
   useEffect(() => {
-    // console.log(startDate);
-    setLeaseInfo((prv) => ({ ...prv, startDate: startDate.toISOString() }));
+    setLeaseInfo((prv) => ({ ...prv, startDate: new Date(startDate).toISOString().split('T')[0] }));
   }, [startDate]);
 
   const hdlChange = (e) => {
@@ -17,15 +20,19 @@ function CreateLeaseStep2(props) {
   };
 
   const calculateEndDate = (startDate, duration) => {
-    // console.log(startDate.getTime());
     if (!startDate || !duration) {
       return;
     }
-    const startDateMS = new Date(startDate).getTime();
-    const lengthMS = Number(duration) * 30 * 24 * 60 * 60 * 1000;
-    const endDateMS = startDateMS + lengthMS;
-    const endDate = new Date(endDateMS).toISOString();
-    setLeaseInfo((prv) => ({ ...prv, endDate: endDate }));
+    const startDate_dayJS = dayjs(startDate);
+    const endDate_dayJS = startDate_dayJS.add(duration, 'month');
+    setLeaseInfo((prv) => ({ ...prv, endDate: endDate_dayJS.$d.toISOString().split('T')[0] }));
+    dayjs.extend(isBetween);
+    // console.log(dayjs().isBetween(startDate_dayJS, endDate_dayJS, null, '[]'));
+    if (dayjs().isBetween(startDate_dayJS, endDate_dayJS, null, '[]')) {
+      setLeaseInfo((prv) => ({ ...prv, status: 'ACTIVE' }));
+    } else {
+      setLeaseInfo((prv) => ({ ...prv, status: 'INACTIVE' }));
+    }
   };
 
   useEffect(() => {
@@ -35,7 +42,7 @@ function CreateLeaseStep2(props) {
   return (
     <div className="flex flex-col">
       <div className="flex">
-        <DayPicker mode="single" onSelect={setStartDate} selected={startDate} />
+        <DayPicker locale={th} mode="single" onSelect={setStartDate} selected={startDate} />
         <form className="flex flex-col gap-4 p-4 w-[400px] mx-auto">
           {/* Room Id */}
           <label className="input w-full">

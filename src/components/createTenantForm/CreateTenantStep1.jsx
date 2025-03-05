@@ -1,25 +1,30 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import useUserStore from '../../stores/userStore';
 
 function CreateTenantStep1(props) {
   const { currentLease, setCurrentLease, currentStep, setCurrentStep } = props;
   const [roomSearch, setRoomSearch] = useState('');
   const [leases, setLeases] = useState([]);
   const [currentTenants, setCurrentTenants] = useState([]);
-
+  const token = useUserStore((state) => state.token);
   const hdlChange = (e) => {
     setRoomSearch((prv) => e.target.value);
   };
 
   const getLeases = async (e) => {
     e.preventDefault();
-    const response = await axios.get(`http://localhost:8000/lease?roomId=${roomSearch}`);
+    const response = await axios.get(`http://localhost:8000/lease?roomId=${roomSearch}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     setLeases((prv) => response?.data?.results);
   };
 
   const hdlSelectLease = async (lease) => {
     setCurrentLease((prv) => lease);
-    const response = await axios.get(`http://localhost:8000/tenant?leaseId=${lease.id}`);
+    const response = await axios.get(`http://localhost:8000/tenant?leaseId=${lease.id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     setCurrentTenants((prv) => response?.data?.results);
   };
   return (

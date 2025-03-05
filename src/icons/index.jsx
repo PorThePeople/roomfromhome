@@ -18,3 +18,25 @@ export function TrashIcon(props) {
     </svg>
   );
 }
+
+export function MoveInIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <g stroke="#000" strokeWidth={1.5} strokeLinecap="round">
+        <path d="M2.001 11.999h14m0 0l-3.5-3m3.5 3l-3.5 3" strokeLinejoin="round" />
+        <path d="M9.002 7c.012-2.175.109-3.353.877-4.121C10.758 2 12.172 2 15 2h1c2.829 0 4.243 0 5.122.879C22 3.757 22 5.172 22 8v8c0 2.828 0 4.243-.878 5.121C20.242 22 18.829 22 16 22h-1c-2.828 0-4.242 0-5.121-.879-.768-.768-.865-1.946-.877-4.121" />
+      </g>
+    </svg>
+  );
+}
+
+export function MoveOutIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" transform="rotate(180)" {...props}>
+      <g stroke="#000" strokeWidth={1.5} strokeLinecap="round">
+        <path d="M9.002 7c.012-2.175.109-3.353.877-4.121C10.758 2 12.172 2 15 2h1c2.829 0 4.243 0 5.122.879C22 3.757 22 5.172 22 8v8c0 2.828 0 4.243-.878 5.121C20.242 22 18.829 22 16 22h-1c-2.828 0-4.242 0-5.121-.879-.768-.768-.865-1.946-.877-4.121" />
+        <path d="M15 12H2m0 0l3.5-3M2 12l3.5 3" strokeLinejoin="round" />
+      </g>
+    </svg>
+  );
+}

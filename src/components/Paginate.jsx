@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 function Paginate(props) {
-  const { setQuery, totalCount, filter } = props;
+  const { setQuery, totalCount, filter, currentPage, setCurrentPage } = props;
   const totalPages = Math.ceil(totalCount / 10);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  useEffect(() => {
-    setCurrentPage((prv) => 1);
-  }, []);
 
   const hdlPageChange = (pageNumber) => {
     setCurrentPage((prv) => pageNumber);
@@ -17,7 +12,7 @@ function Paginate(props) {
   };
   return (
     <div className="flex flex-col gap-2 p-2 items-center">
-      <div className="text-lg italic opacity-50">{totalCount} Rooms Found</div>
+      <div className="text-lg italic opacity-50">{totalCount} Results Found</div>
       <div className="join">
         {[...Array(totalPages).keys()].map((page) => (
           <input

@@ -2,38 +2,74 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import useUserStore from '../stores/userStore';
+import { createError } from '../utils/error-warning';
+import { createSuccess } from '../utils/success-alert';
+import Swal from 'sweetalert2';
 
 function ModalDeleteRoom(props) {
   const { register, handleSubmit, formState, reset } = useForm();
   const { isSubmitting, errors } = formState;
-  //   console.log(errors);
 
   const { room, filter, setQuery } = props;
   const token = useUserStore((state) => state.token);
+  console.log(room);
 
   const hdlSubmit = async (value) => {
-    console.log(room);
-    // Call API
-    const result = await axios.delete(`http://localhost:8000/room/${room.id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    try {
+      if (room.status == 'OCCUPIED') {
+        Swal.fire({
+          title: 'Warning!',
+          text: 'This room is currently occupied',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Confirm Delete',
+          target: document.getElementById('deleteRoom-modal'),
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            const result = await axios.delete(`http://localhost:8000/room/${room.id}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
 
-    // Reset Fields
-    reset();
+            document.getElementById('deleteRoom-modal').close();
+            createSuccess();
+            reset();
 
-    // Close Modal
-    document.getElementById('deleteRoom-modal').close();
+            setQuery((prv) => ({
+              contains: '',
+              status: '',
+              airCon: '',
+              orderBySort: '&orderBy=updatedAt&sort=desc',
+              take: '10',
+              skip: '',
+            }));
+            filter();
+          }
+        });
+      } else {
+        const result = await axios.delete(`http://localhost:8000/room/${room.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-    // Fetch All Data
-    setQuery((prv) => ({
-      contains: '',
-      status: '',
-      airCon: '',
-      orderBySort: '&orderBy=updatedAt&sort=desc',
-      take: '10',
-      skip: '',
-    }));
-    filter();
+        document.getElementById('deleteRoom-modal').close();
+        createSuccess();
+        reset();
+
+        setQuery((prv) => ({
+          contains: '',
+          status: '',
+          airCon: '',
+          orderBySort: '&orderBy=updatedAt&sort=desc',
+          take: '10',
+          skip: '',
+        }));
+        filter();
+      }
+    } catch (error) {
+      const errMsg = error.response?.data?.error || error.message;
+      createError(errMsg, 'deleteRoom-modal');
+    }
   };
 
   return (
@@ -44,6 +80,7 @@ function ModalDeleteRoom(props) {
       >
         ✕
       </button>
+      <div className="text-2xl text-center">Delete This Room</div>
       <form className="flex flex-col gap-4 p-4 w-[400px] mx-auto" onSubmit={handleSubmit(hdlSubmit)}>
         {/* Room Id */}
         <label className="input w-full">
@@ -57,6 +94,12 @@ function ModalDeleteRoom(props) {
           Monthly Rate:
           <input type="number" className="grow" placeholder="Monthly Rate" required disabled value={room.monthlyRate} />
         </label>
+        {/* Status */}
+        <label className="input w-full">
+          {' '}
+          Status:
+          <input type="input" className="grow" placeholder="Status" required disabled value={room.status} />
+        </label>
         {/* AirCon */}
         <label className="input w-full">
           AirCon:
@@ -67,6 +110,27 @@ function ModalDeleteRoom(props) {
           Furniture:
           <input type="input" className="grow" placeholder="Furniture" disabled value={room.furniture} />
         </label>
+        {room.Lease.length > 0 && (
+          <>
+            <div>Deleting this room will delete the following leases and tenants:</div>
+            {room.Lease.map((lease) => {
+              return (
+                <div className="flex gap-4">
+                  <div>Lease Id={lease.id}: </div>
+                  <div>
+                    {lease.Tenant.map((tenant) => {
+                      return (
+                        <div>
+                          {tenant.firstName} {tenant.lastName}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        )}
         <button className="btn btn-primary text-lg text-white" type="submit">
           Delete this room
         </button>

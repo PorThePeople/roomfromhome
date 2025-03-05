@@ -20,7 +20,10 @@ function Rooms() {
   const [rooms, setRooms] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [query, setQuery] = useState(initialQuery);
+  const [currentPage, setCurrentPage] = useState(1);
+
   const token = useUserStore((state) => state.token);
+  const user = useUserStore((state) => state.user);
 
   // Fetch all data on initial page load
   useEffect(() => {
@@ -31,6 +34,12 @@ function Rooms() {
   const hdlChange = (e) => {
     setQuery((prv) => ({ ...prv, [e.target.name]: e.target.value }));
   };
+
+  useEffect(() => {
+    filter();
+    setCurrentPage((prv) => 1);
+    setQuery((prv) => ({ ...prv, skip: '' }));
+  }, [query.contains, query.status, query.airCon, query.orderBySort]);
 
   // Debounce before calling Axios
   const filter = useDebouncedCallback(async () => {
@@ -48,21 +57,19 @@ function Rooms() {
     setQuery(initialQuery);
   };
 
-  useEffect(() => {
-    filter();
-  }, [query.contains, query.status, query.airCon, query.orderBySort]);
-
   return (
     <div className="w-full">
       <form className="flex">
         {/* Add New Room */}
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={(e) => document.getElementById('createRoom-modal').showModal()}
-        >
-          Create New Room
-        </button>
+        {user.role == 'ADMIN' && (
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={(e) => document.getElementById('createRoom-modal').showModal()}
+          >
+            Create New Room
+          </button>
+        )}
         {/* Search Room Number */}
         <label className="input flex-grow-1">
           <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -103,7 +110,13 @@ function Rooms() {
       {/* Render all rooms */}
       <RoomsContainer rooms={rooms} setQuery={setQuery} filter={filter} />
       {/* Pagination */}
-      <Paginate setQuery={setQuery} filter={filter} totalCount={totalCount} />
+      <Paginate
+        setQuery={setQuery}
+        filter={filter}
+        totalCount={totalCount}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
       {/* Modal */}
       <dialog id="createRoom-modal" className="modal">
         <div className="modal-box">

@@ -21,6 +21,7 @@ function CreateLeaseStep3(props) {
               name="firstName"
               required
               onChange={(e) => hdlChange(e)}
+              value={tenant.firstName}
             />
           </label>
           <label className="input w-full">
@@ -31,6 +32,7 @@ function CreateLeaseStep3(props) {
               name="lastName"
               required
               onChange={(e) => hdlChange(e)}
+              value={tenant.lastName}
             />
           </label>
           {/* National Id */}
@@ -42,6 +44,7 @@ function CreateLeaseStep3(props) {
               name="nationalId"
               required
               onChange={(e) => hdlChange(e)}
+              value={tenant.nationalId}
             />
           </label>
           {/*  Phone */}
@@ -53,6 +56,7 @@ function CreateLeaseStep3(props) {
               name="phone"
               required
               onChange={(e) => hdlChange(e)}
+              value={tenant.phone}
             />
           </label>
         </form>

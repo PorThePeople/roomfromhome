@@ -7,8 +7,9 @@ import CreateLeaseStep3 from './createLeaseForm/CreateLeaseStep3';
 import CreateLeaseStep4 from './createLeaseForm/CreateLeaseStep4';
 import CreateLeaseStep2 from './createLeaseForm/CreateLeaseStep2';
 import CreateLeaseStep1 from './createLeaseForm/CreateLeaseStep1';
+import { createError } from '../utils/error-warning';
 
-const emptyLease = { startDate: '', duration: '', endDate: '', deposit: '' };
+const emptyLease = { startDate: '', duration: '', endDate: '', deposit: '', status: '' };
 
 function ModalCreateLease() {
   const [availableRooms, setAvailableRooms] = useState([]);
@@ -40,37 +41,50 @@ function ModalCreateLease() {
   };
 
   const hdlCreateLease = async () => {
-    const leaseBody = {
-      roomId: currentRoom.id,
-      signDate: new Date(leaseInfo.startDate).toISOString().split('T')[0],
-      startDate: new Date(leaseInfo.startDate).toISOString().split('T')[0],
-      duration: Number(leaseInfo.duration),
-      endDate: new Date(leaseInfo.endDate).toISOString().split('T')[0],
-      deposit: Number(leaseInfo.deposit),
-      employeeId: user.id,
-    };
-    console.log(leaseBody);
-    const leaseResult = await axios.post('http://localhost:8000/lease', leaseBody, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log(leaseResult);
-    const tenantBody = {
-      firstName: tenant.firstName,
-      lastName: tenant.lastName,
-      nationalId: tenant.nationalId,
-      phone: tenant.phone,
-      leaseId: Number(leaseResult.data.result.id),
-    };
-    const tenantResult = await axios.post('http://localhost:8000/tenant', tenantBody, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log(tenantResult);
-    if (tenantResult.status == 201) {
-      hdlCloseModal();
-      Swal.fire({
-        title: 'Create Tenant and Lease Success!',
-        icon: 'success',
+    try {
+      const leaseBody = {
+        roomId: currentRoom.id,
+        signDate: new Date(leaseInfo.startDate).toISOString().split('T')[0],
+        startDate: new Date(leaseInfo.startDate).toISOString().split('T')[0],
+        duration: Number(leaseInfo.duration),
+        endDate: new Date(leaseInfo.endDate).toISOString().split('T')[0],
+        deposit: Number(leaseInfo.deposit),
+        employeeId: user.id,
+        status: leaseInfo.status,
+      };
+
+      const leaseResult = await axios.post('http://localhost:8000/lease', leaseBody, {
+        headers: { Authorization: `Bearer ${token}` },
       });
+
+      const tenantBody = {
+        firstName: tenant.firstName,
+        lastName: tenant.lastName,
+        nationalId: tenant.nationalId,
+        phone: tenant.phone,
+        leaseId: Number(leaseResult.data.result.id),
+      };
+      const tenantResult = await axios.post('http://localhost:8000/tenant', tenantBody, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const roomBody = {
+        status: 'OCCUPIED',
+      };
+      const roomResult = await axios.put(`http://localhost:8000/room/${currentRoom.id}`, roomBody, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (roomResult.status == 200) {
+        hdlCloseModal();
+        Swal.fire({
+          title: 'Create Successful!',
+          icon: 'success',
+        });
+      }
+    } catch (error) {
+      const errMsg = error.response?.data?.error || error.message;
+      createError(errMsg, 'createLease-modal');
     }
   };
 
@@ -80,6 +94,8 @@ function ModalCreateLease() {
       <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={hdlCloseModal}>
         ✕
       </button>
+      <div className="text-2xl text-center">Create New Lease</div>
+
       {/* Progress Indicator */}
       <div className="flex justify-center">
         <ul className="steps">

@@ -45,7 +45,7 @@ function RoomsContainer(props) {
       </div>
       <dialog id="deleteRoom-modal" className="modal">
         <div className="modal-box">
-          <ModalDeleteRoom room={currentRoom} setQuery={setQuery} filter={filter} />
+          {currentRoom.id && <ModalDeleteRoom room={currentRoom} setQuery={setQuery} filter={filter} />}
         </div>
       </dialog>
       <dialog id="editRoom-modal" className="modal">

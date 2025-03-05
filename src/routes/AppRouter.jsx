@@ -5,6 +5,7 @@ import useUserStore from '../stores/userStore';
 import Rooms from '../pages/Rooms';
 import Leases from '../pages/Leases';
 import Tenants from '../pages/Tenants';
+import Dashboard from '../pages/Dashboard';
 
 const guestRouter = createBrowserRouter([
   { path: '/', element: <Login /> },
@@ -20,7 +21,7 @@ const userRouter = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <div>Homepage</div>,
+        element: <Dashboard />,
       },
       { path: 'rooms', element: <Rooms /> },
       { path: 'tenants', element: <Tenants /> },

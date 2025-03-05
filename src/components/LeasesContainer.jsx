@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import LeaseItem from './LeaseItem';
+import ModalDeleteLease from './ModalDeleteLease';
 
 function LeasesContainer(props) {
-  const { leases } = props;
+  const { leases, filter } = props;
+  const [currentLease, setCurrentLease] = useState();
+
+  const hdlDeleteLease = (lease) => {
+    setCurrentLease((prv) => lease);
+    document.getElementById('deleteLease-modal').showModal();
+  };
+
   return (
     <>
       <div className="overflow-x-auto">
@@ -23,16 +31,14 @@ function LeasesContainer(props) {
           <tbody>
             {/* Map Items */}
             {leases.map((lease) => {
-              return <LeaseItem key={lease.id} lease={lease} />;
+              return <LeaseItem key={lease.id} lease={lease} hdlDeleteLease={hdlDeleteLease} />;
             })}
           </tbody>
         </table>
       </div>
-      <dialog id="deleteRoom-modal" className="modal">
-        <div className="modal-box"></div>
-      </dialog>
-      <dialog id="editRoom-modal" className="modal">
-        <div className="modal-box"></div>
+
+      <dialog id="deleteLease-modal" className="modal">
+        <div className="modal-box">{currentLease && <ModalDeleteLease lease={currentLease} filter={filter} />}</div>
       </dialog>
     </>
   );

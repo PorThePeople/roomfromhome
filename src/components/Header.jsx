@@ -1,9 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import useUserStore from '../stores/userStore';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import ModalProfile from './ModalProfile';
 
 function Header() {
   const logout = useUserStore((state) => state.logout);
+  const navigate = useNavigate();
+  const [modalState, setModalState] = useState(false);
+
+  const hdlClickLogout = () => {
+    navigate('/');
+    logout();
+  };
+
+  const hdlProfile = () => {
+    setModalState((prv) => true);
+    document.getElementById('profile-modal').showModal();
+  };
+
   return (
     <div>
       <div className="navbar bg-base-100 shadow-sm">
@@ -28,10 +42,10 @@ function Header() {
                 User ⬇️
               </div>
               <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                <li>
-                  <a>Settings</a>
+                <li onClick={hdlProfile}>
+                  <a>My Profile</a>
                 </li>
-                <li onClick={logout}>
+                <li onClick={hdlClickLogout}>
                   <a>Log out</a>
                 </li>
               </ul>
@@ -39,6 +53,9 @@ function Header() {
           </ul>
         </div>
       </div>
+      <dialog id="profile-modal" className="modal">
+        <div className="modal-box">{modalState && <ModalProfile setModalState={setModalState} />}</div>
+      </dialog>
     </div>
   );
 }
