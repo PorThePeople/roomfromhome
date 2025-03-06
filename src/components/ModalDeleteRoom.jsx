@@ -10,9 +10,8 @@ function ModalDeleteRoom(props) {
   const { register, handleSubmit, formState, reset } = useForm();
   const { isSubmitting, errors } = formState;
 
-  const { room, filter, setQuery } = props;
+  const { room, filter, setQuery, setDeleteModalState } = props;
   const token = useUserStore((state) => state.token);
-  console.log(room);
 
   const hdlSubmit = async (value) => {
     try {
@@ -72,12 +71,14 @@ function ModalDeleteRoom(props) {
     }
   };
 
+  const hdlCloseModal = () => {
+    setDeleteModalState((prv) => false);
+    document.getElementById('deleteRoom-modal').close();
+  };
+
   return (
     <div>
-      <button
-        className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-        onClick={() => document.getElementById('deleteRoom-modal').close()}
-      >
+      <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={hdlCloseModal}>
         ✕
       </button>
       <div className="text-2xl text-center">Delete This Room</div>

@@ -4,7 +4,7 @@ import ModalEditTenant from './ModalEditTenant';
 import ModalDeleteTenant from './ModalDeleteTenant';
 
 function TenantContainer(props) {
-  const { tenants, getTenants } = props;
+  const { tenants, filter } = props;
   const [currentTenant, setCurrentTenant] = useState({});
 
   const hdlEditTenant = (tenant) => {
@@ -50,12 +50,12 @@ function TenantContainer(props) {
         </div>
         <dialog id="deleteTenant-modal" className="modal">
           <div className="modal-box">
-            <ModalDeleteTenant tenant={currentTenant} getTenants={getTenants} />
+            <ModalDeleteTenant tenant={currentTenant} filter={filter} />
           </div>
         </dialog>
         <dialog id="editTenant-modal" className="modal">
           <div className="modal-box">
-            <ModalEditTenant tenant={currentTenant} getTenants={getTenants} />
+            <ModalEditTenant tenant={currentTenant} filter={filter} />
           </div>
         </dialog>
       </>

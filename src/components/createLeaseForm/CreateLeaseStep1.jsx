@@ -11,11 +11,11 @@ function CreateLeaseStep1(props) {
     <div className="flex flex-col">
       <div className="flex gap-2">
         {/* Available Rooms */}
-        <div className="flex flex-wrap justify-start items-start p-4 gap-4 bg-red-200 flex-1">
+        <div className="flex flex-wrap justify-start items-start p-4 gap-4 flex-1">
           {/* <pre>{JSON.stringify(availableRooms, null, 2)}</pre> */}
           {availableRooms.map((room) => {
             return (
-              <button className="btn" key={room.id} onClick={() => hdlSelectRoom(room)}>
+              <button className="btn w-[50px]" key={room.id} onClick={() => hdlSelectRoom(room)}>
                 {room.id}
               </button>
             );

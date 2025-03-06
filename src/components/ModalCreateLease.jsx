@@ -8,16 +8,17 @@ import CreateLeaseStep4 from './createLeaseForm/CreateLeaseStep4';
 import CreateLeaseStep2 from './createLeaseForm/CreateLeaseStep2';
 import CreateLeaseStep1 from './createLeaseForm/CreateLeaseStep1';
 import { createError } from '../utils/error-warning';
+import { createSuccess } from '../utils/success-alert';
 
 const emptyLease = { startDate: '', duration: '', endDate: '', deposit: '', status: '' };
 
-function ModalCreateLease() {
+function ModalCreateLease(props) {
   const [availableRooms, setAvailableRooms] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [currentRoom, setCurrentRoom] = useState({});
   const [leaseInfo, setLeaseInfo] = useState({});
   const [tenant, setTenant] = useState({});
-
+  const { filter } = props;
   const token = useUserStore((state) => state.token);
   const user = useUserStore((state) => state.user);
 
@@ -51,6 +52,10 @@ function ModalCreateLease() {
         deposit: Number(leaseInfo.deposit),
         employeeId: user.id,
         status: leaseInfo.status,
+        firstName: tenant.firstName,
+        lastName: tenant.lastName,
+        nationalId: tenant.nationalId,
+        phone: tenant.phone,
       };
 
       const leaseResult = await axios.post('http://localhost:8000/lease', leaseBody, {
@@ -63,25 +68,23 @@ function ModalCreateLease() {
         nationalId: tenant.nationalId,
         phone: tenant.phone,
         leaseId: Number(leaseResult.data.result.id),
+        status: leaseInfo.status,
       };
       const tenantResult = await axios.post('http://localhost:8000/tenant', tenantBody, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const roomBody = {
-        status: 'OCCUPIED',
-      };
-      const roomResult = await axios.put(`http://localhost:8000/room/${currentRoom.id}`, roomBody, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (roomResult.status == 200) {
-        hdlCloseModal();
-        Swal.fire({
-          title: 'Create Successful!',
-          icon: 'success',
+      if (leaseInfo.status == 'ACTIVE') {
+        const roomBody = {
+          status: 'OCCUPIED',
+        };
+        const roomResult = await axios.put(`http://localhost:8000/room/${currentRoom.id}`, roomBody, {
+          headers: { Authorization: `Bearer ${token}` },
         });
       }
+      filter();
+      hdlCloseModal();
+      createSuccess();
     } catch (error) {
       const errMsg = error.response?.data?.error || error.message;
       createError(errMsg, 'createLease-modal');

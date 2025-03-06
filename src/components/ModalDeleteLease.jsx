@@ -4,6 +4,7 @@ import axios from 'axios';
 import useUserStore from '../stores/userStore';
 import Swal from 'sweetalert2';
 import { createError } from '../utils/error-warning';
+import { createSuccess } from '../utils/success-alert';
 
 function ModalDeleteLease(props) {
   const { lease, filter } = props;
@@ -27,14 +28,10 @@ function ModalDeleteLease(props) {
             const response = await axios.delete(`http://localhost:8000/lease/${lease.id}`, {
               headers: { Authorization: `Bearer ${token}` },
             });
-            if (response?.data?.status == 204) {
-              document.getElementById('deleteLease-modal').close();
-              Swal.fire({
-                title: 'Deleted!',
-                text: 'Your file has been deleted.',
-                icon: 'success',
-              });
-            }
+            console.log(response);
+            document.getElementById('deleteLease-modal').close();
+            createSuccess();
+            filter();
           }
         });
       } else {

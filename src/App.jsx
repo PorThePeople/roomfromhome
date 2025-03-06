@@ -5,9 +5,9 @@ import Header from './components/Header';
 function App() {
   return (
     <>
-      <div className="min-h-screen bg-lime-100">
+      <div className="min-h-screen bg-gray-100 ">
         <Header />
-        <main className="flex bg-gray-100">
+        <main className="flex ">
           <Outlet />
         </main>
       </div>

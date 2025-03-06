@@ -45,7 +45,7 @@ function Tenants() {
   }, [query.contains, query.status, query.orderBySort]);
 
   return (
-    <div className="w-full">
+    <div className="w-full p-4">
       <div className="flex">
         {/* Add New Tenant */}
         <button
@@ -56,7 +56,7 @@ function Tenants() {
           Add New Tenant
         </button>
         {/* Search Room Number */}
-        <label className="input">
+        <label className="input flex-1">
           <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
               <circle cx="11" cy="11" r="8"></circle>
@@ -66,7 +66,7 @@ function Tenants() {
           <input type="text" placeholder="Search by Room" name="contains" />
         </label>
         {/* Search Name */}
-        <label className="input">
+        <label className="input flex-1">
           <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
               <circle cx="11" cy="11" r="8"></circle>

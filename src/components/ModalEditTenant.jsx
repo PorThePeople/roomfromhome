@@ -5,7 +5,7 @@ import useUserStore from '../stores/userStore';
 import Swal from 'sweetalert2';
 
 function ModalEditTenant(props) {
-  const { tenant, getTenants } = props;
+  const { tenant, filter } = props;
   const { register, handleSubmit, formState, reset, setValue } = useForm();
   const token = useUserStore((state) => state.token);
 
@@ -32,7 +32,7 @@ function ModalEditTenant(props) {
     });
 
     if (response.status == 200) {
-      getTenants();
+      filter();
       hdlCloseModal();
       Swal.fire({
         title: 'Update Tenant Info Successful!',

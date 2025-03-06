@@ -4,9 +4,10 @@ import axios from 'axios';
 import useUserStore from '../stores/userStore';
 import Swal from 'sweetalert2';
 import { createError } from '../utils/error-warning';
+import { createSuccess } from '../utils/success-alert';
 
 function ModalDeleteTenant(props) {
-  const { tenant, getTenants } = props;
+  const { tenant, filter } = props;
   const { register, handleSubmit, formState, reset, setValue } = useForm();
   const token = useUserStore((state) => state.token);
 
@@ -28,17 +29,12 @@ function ModalDeleteTenant(props) {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (response.status == 204) {
-        getTenants();
-        hdlCloseModal();
-        Swal.fire({
-          title: 'Update Tenant Info Successful!',
-          icon: 'success',
-        });
-      }
+      filter();
+      hdlCloseModal();
+      createSuccess();
     } catch (error) {
       const errMsg = error.response?.data?.error || error.message;
-      createError(errMsg, 'deleteUser-modal');
+      createError(errMsg, 'deleteTenant-modal');
     }
   };
 

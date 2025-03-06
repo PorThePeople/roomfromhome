@@ -6,6 +6,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import Paginate from '../components/Paginate';
 import useUserStore from '../stores/userStore';
 import ModalCreateRoom from '../components/ModalCreateRoom';
+import ModalRoomDetails from '../components/ModalRoomDetails';
 
 const initialQuery = {
   contains: '',
@@ -58,7 +59,7 @@ function Rooms() {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full p-4">
       <form className="flex">
         {/* Add New Room */}
         {user.role == 'ADMIN' && (
